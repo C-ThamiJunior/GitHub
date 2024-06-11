@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Review</title>
+</head>
+<body>
+    <h1>Add Review</h1>
+    <form action="/addReview" method="post" th:object="${review}">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" th:field="*{name}" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:field="*{email}" required><br><br>
+
+        <label for="service">Service:</label>
+        <input type="text" id="service" name="service" th:field="*{service}" required><br><br>
+
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" th:field="*{comment}" required></textarea><br><br>
+
+        <label for="rating">Rating:</label>
+        <select id="rating" name="rating" th:field="*{rating}" required>
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+        </select><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

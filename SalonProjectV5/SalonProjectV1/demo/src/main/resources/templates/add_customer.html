@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Customer</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/css/bootstrap.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: beige;
+        }
+
+        .form-container {
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            animation: fadeInAnimation 1s ease-in-out;
+            background-color: #8B4513;
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            font-weight: bold;
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        .form-container .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .form-container .form-control {
+            border-radius: 20px;
+            padding: 16px;
+            font-size: 16px;
+            box-shadow: none;
+            border: 1px solid #ffffff;
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .form-container .form-control:focus {
+            box-shadow: none;
+            border-color: #ffffff;
+        }
+
+        .form-container .btn-primary {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            color: #8B4513;
+        }
+
+        .form-container .btn-primary:hover {
+            background-color: #e1e1e1;
+        }
+
+        /* Additional animations and hover effects */
+        .form-container .form-group input,
+        .form-container .form-group textarea {
+            transition: border-color 0.3s ease;
+        }
+
+        .form-container .form-group input:focus,
+        .form-container .form-group textarea:focus {
+            border-color: #ffffff;
+        }
+
+        .form-container .form-group label {
+            transition: color 0.3s ease;
+        }
+
+        .form-container .form-group:hover label {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="form-container animate__animated animate__fadeIn">
+            <h2>Add Customer</h2>
+            <form action="/addCustomer" method="post">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="secondName">Second Name:</label>
+                    <input type="text" id="secondName" name="secondName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" id="phoneNumber" name="phoneNumber" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input type="time" id="time" name="time" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="message">Select Service:</label>
+                    <select class="form-control" id="message" name="message">
+                        <option>Hairstyle</option>
+                        <option>Styling</option>
+                        <option>Manicure</option>
+                        <option>Pedicure</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

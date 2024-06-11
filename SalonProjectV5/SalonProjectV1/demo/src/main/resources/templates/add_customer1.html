@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Customer</title>
+</head>
+<body>
+    <h2>Add Customer</h2>
+    <form action="/addCustomer" method="post" th:object="${customer}">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" th:field="*{firstName}"><br><br>
+        
+        <label for="secondName">Second Name:</label>
+        <input type="text" id="secondName" name="secondName" th:field="*{secondName}"><br><br>
+        
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}"><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:field="*{email}"><br><br>
+        
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" th:field="*{date}"><br><br>
+        
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" th:field="*{time}"><br><br>
+        
+      
+            <label for="service">Select Service:</label>
+            <select class="form-control" th:field="*{service}">
+                <option>Hairstyle </option>
+                <option> Styling</option>
+                <option>Manicure </option> 
+                <option>>Pedicure</option>
+            </select>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

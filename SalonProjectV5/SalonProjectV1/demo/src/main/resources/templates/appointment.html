@@ -1,0 +1,27 @@
+<body>
+    <div class="container">
+        <h1>Book an Appointment</h1>
+
+        <form action="/submitAppointment" method="post">
+        
+            <div class="mb-3">
+                <label for="customerName" class="form-label">Your Name</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Enter your name">
+            </div>
+            <div class="mb-3">
+                <label for="appointmentDate" class="form-label">Appointment Date</label>
+                <input type="date" class="form-control" id="appointmentDate">
+            </div>
+            <div class="mb-3">
+                <label for="serviceType" class="form-label">Service Type</label>
+                <select class="form-select" id="serviceType">
+                    <option selected>Select service type</option>
+                    <option value="haircut">Haircut</option>
+                    <option value="manicure">Manicure</option>
+                    <option value="pedicure">Pedicure</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>

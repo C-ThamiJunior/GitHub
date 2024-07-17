@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSwipeable } from 'react-swipeable';
+import { useSpring, animated } from '@react-spring/web';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -12,67 +13,97 @@ function App() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [animationProps, setAnimationProps] = useSpring(() => ({
+        opacity: 1,
+        transform: 'translate3d(0,0,0)',
+    }));
+
+    const fetchCatImages = async () => {
+        try {
+            const response = await fetch(imagesUrl, {
+                headers: {
+                    'x-api-key': api_key,
+                },
+            });
+            const data = await response.json();
+            return data.map(catImage => ({
+                image: catImage.url,
+                temperament: catImage.breeds?.[0]?.temperament || 'Unknown', // Assuming temperament info is in catImage
+            }));
+        } catch (err) {
+            throw new Error('Error fetching cat images');
+        }
+    };
+
+    const fetchCatNames = async () => {
+        try {
+            const response = await fetch(namesUrl);
+            const data = await response.json();
+            return data.map(cat => ({
+                name: cat,
+            }));
+        } catch (err) {
+            throw new Error('Error fetching cat names');
+        }
+    };
+
+    const fetchCats = async () => {
+        try {
+            const [catImages, catNames] = await Promise.all([
+                fetchCatImages(),
+                fetchCatNames()
+            ]);
+
+            const formattedData = catImages.map((catImage, index) => ({
+                ...catImage,
+                name: catNames[index % catNames.length].name, // Rotate through names
+                age: Math.floor(Math.random() * 10) + 1, // Random age for demo
+            }));
+
+            setCats(prevCats => [...prevCats, ...formattedData]);
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchCatImages = async () => {
-            try {
-                const response = await fetch(imagesUrl, {
-                    headers: {
-                        'x-api-key': api_key,
-                    },
-                });
-                const data = await response.json();
-                return data.map(catImage => ({
-                    image: catImage.url,
-                    temperament: catImage.breeds?.[0]?.temperament || 'Unknown', // Assuming temperament info is in catImage
-                }));
-            } catch (err) {
-                throw new Error('Error fetching cat images');
-            }
-        };
-
-        const fetchCatNames = async () => {
-            try {
-                const response = await fetch(namesUrl);
-                const data = await response.json();
-                return data.map(cat => ({
-                    name: cat,
-                }));
-            } catch (err) {
-                throw new Error('Error fetching cat names');
-            }
-        };
-
-        const fetchCats = async () => {
-            try {
-                const [catImages, catNames] = await Promise.all([
-                    fetchCatImages(),
-                    fetchCatNames()
-                ]);
-
-                const formattedData = catImages.map((catImage, index) => ({
-                    ...catImage,
-                    name: catNames[index % catNames.length].name, // Rotate through names
-                    age: Math.floor(Math.random() * 10) + 1, // Random age for demo
-                }));
-
-                setCats(formattedData);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
         fetchCats();
     }, []);
 
     const handleLike = () => {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
+        setAnimationProps({
+            opacity: 0,
+            transform: 'translate3d(100%,0,0)',
+            onRest: () => {
+                setCurrentIndex((prevIndex) => prevIndex + 1);
+                setAnimationProps({
+                    opacity: 1,
+                    transform: 'translate3d(0,0,0)',
+                });
+                if (currentIndex >= cats.length - 1) {
+                    fetchCats();
+                }
+            },
+        });
     };
 
     const handleDislike = () => {
-        setCurrentIndex((prevIndex) => prevIndex + 1);
+        setAnimationProps({
+            opacity: 0,
+            transform: 'translate3d(-100%,0,0)',
+            onRest: () => {
+                setCurrentIndex((prevIndex) => prevIndex + 1);
+                setAnimationProps({
+                    opacity: 1,
+                    transform: 'translate3d(0,0,0)',
+                });
+                if (currentIndex >= cats.length - 1) {
+                    fetchCats();
+                }
+            },
+        });
     };
 
     const handlers = useSwipeable({
@@ -98,7 +129,7 @@ function App() {
 
     return (
         <div {...handlers} className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-            <div className="card" style={{ width: '18rem' }}>
+            <animated.div style={animationProps} className="card" >
                 <img src={currentCat.image} className="card-img-top" alt={currentCat.name} />
                 <div className="card-body">
                     <h5 className="card-title">{currentCat.name}</h5>
@@ -109,10 +140,11 @@ function App() {
                         <button className="btn btn-danger" onClick={handleDislike}>Dislike</button>
                     </div>
                 </div>
-            </div>
+            </animated.div>
         </div>
     );
 }
+
 
 
 

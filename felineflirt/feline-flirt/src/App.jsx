@@ -11,12 +11,17 @@ function App() {
     useEffect(() => {
         const fetchCats = async () => {
             try {
-                const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=10');
-                const data = await response.json();
-                const formattedData = data.map(cat => ({
-                    name: `Cat ${cat.id}`,
+                const [catImagesResponse, catNamesResponse] = await Promise.all([
+                    fetch('https://api.thecatapi.com/v1/images/search?limit=10'),
+                    fetch('https://tools.estevecastells.com/api/cats/v1?limit=10')
+                ]);
+                const catImages = await catImagesResponse.json();
+                const catNames = await catNamesResponse.json();
+
+                const formattedData = catImages.map((catImage, index) => ({
+                    name: catNames[index % catNames.length].name, // Rotate through names
                     age: Math.floor(Math.random() * 10) + 1, // Random age for demo
-                    image: cat.url,
+                    image: catImage.url,
                 }));
                 setCats(formattedData);
                 setLoading(false);
@@ -68,5 +73,4 @@ function App() {
     );
 }
 
-
-export default App
+export default App;

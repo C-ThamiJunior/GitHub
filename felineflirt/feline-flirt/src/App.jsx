@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import { useSwipeable } from 'react-swipeable';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+
+const api_key = "DEMO_API_KEY";
+const imagesUrl = `https://api.thecatapi.com/v1/images/search?limit=10`;
+const namesUrl = `https://tools.estevecastells.com/api/cats/v1?limit=10`;
 
 function App() {
     const [cats, setCats] = useState([]);
@@ -9,20 +14,48 @@ function App() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchCatImages = async () => {
+            try {
+                const response = await fetch(imagesUrl, {
+                    headers: {
+                        'x-api-key': api_key,
+                    },
+                });
+                const data = await response.json();
+                return data.map(catImage => ({
+                    image: catImage.url,
+                    temperament: catImage.breeds?.[0]?.temperament || 'Unknown', // Assuming temperament info is in catImage
+                }));
+            } catch (err) {
+                throw new Error('Error fetching cat images');
+            }
+        };
+
+        const fetchCatNames = async () => {
+            try {
+                const response = await fetch(namesUrl);
+                const data = await response.json();
+                return data.map(cat => ({
+                    name: cat,
+                }));
+            } catch (err) {
+                throw new Error('Error fetching cat names');
+            }
+        };
+
         const fetchCats = async () => {
             try {
-                const [catImagesResponse, catNamesResponse] = await Promise.all([
-                    fetch('https://api.thecatapi.com/v1/images/search?limit=10'),
-                    fetch('https://tools.estevecastells.com/api/cats/v1?limit=10')
+                const [catImages, catNames] = await Promise.all([
+                    fetchCatImages(),
+                    fetchCatNames()
                 ]);
-                const catImages = await catImagesResponse.json();
-                const catNames = await catNamesResponse.json();
 
                 const formattedData = catImages.map((catImage, index) => ({
+                    ...catImage,
                     name: catNames[index % catNames.length].name, // Rotate through names
                     age: Math.floor(Math.random() * 10) + 1, // Random age for demo
-                    image: catImage.url,
                 }));
+
                 setCats(formattedData);
                 setLoading(false);
             } catch (err) {
@@ -42,6 +75,13 @@ function App() {
         setCurrentIndex((prevIndex) => prevIndex + 1);
     };
 
+    const handlers = useSwipeable({
+        onSwipedLeft: handleDislike,
+        onSwipedRight: handleLike,
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true,
+    });
+
     if (loading) {
         return <h1 className="text-center">Loading...</h1>;
     }
@@ -57,12 +97,13 @@ function App() {
     const currentCat = cats[currentIndex];
 
     return (
-        <div className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div {...handlers} className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
             <div className="card" style={{ width: '18rem' }}>
                 <img src={currentCat.image} className="card-img-top" alt={currentCat.name} />
                 <div className="card-body">
                     <h5 className="card-title">{currentCat.name}</h5>
                     <p className="card-text">{currentCat.age} years old</p>
+                    <p className="card-text">Temperament: {currentCat.temperament}</p>
                     <div className="d-flex justify-content-between">
                         <button className="btn btn-success" onClick={handleLike}>Like</button>
                         <button className="btn btn-danger" onClick={handleDislike}>Dislike</button>
@@ -72,5 +113,7 @@ function App() {
         </div>
     );
 }
+
+
 
 export default App;
